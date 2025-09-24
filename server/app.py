@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request, make_response, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from sqlalchemy import MetaData
@@ -29,6 +29,17 @@ def create_app():
 
     @app.route("/")
     def home():
-        return {"message": "Knowledge Base API running"}
+        return jsonify({"message": "Knowledge Base API running"}), 200
+    
+    @app.route('/articles', methods=['GET'])
+    def get_articles():
+        articles = Article.query.all()
+        return jsonify([article.serialize() for article in articles]), 200
+
+    # Optional: catch-all for unsupported methods (for the app, not individual route)
+    @app.errorhandler(405)
+    def method_not_allowed(e):
+        return jsonify({"text": "Method Not Allowed"}), 405
+
 
     return app
