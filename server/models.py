@@ -1,4 +1,4 @@
-from datetime import datetime
+from sqlalchemy import func
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy import Column, Integer, String, JSON
@@ -39,7 +39,7 @@ class User(db.Model):
     name = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, unique=True, index=True)
     password_hash = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
 
     # relationships
     roles = db.relationship("Role", secondary="user_roles", back_populates="users")
@@ -124,8 +124,9 @@ class Article(db.Model):
     content = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     category_id = db.Column(db.Integer, db.ForeignKey("categories.id"))
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+   # Use database-side defaults
+    created_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
+    updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 
     # relationships
     author = db.relationship("User", back_populates="articles")
