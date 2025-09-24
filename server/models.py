@@ -1,9 +1,10 @@
 from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.associationproxy import association_proxy
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Column, Integer, String, JSON
+from extensions import db
+# from sqlalchemy.dialects.postgresql import JSONB
 
-db = SQLAlchemy()
 
 # -----------------------------
 # Association Tables
@@ -168,7 +169,7 @@ class ArticleMedia(db.Model):
     article_id = db.Column(db.Integer, db.ForeignKey("articles.id"))
     media_type = db.Column(db.String(50))
     url = db.Column(db.Text)
-    metadata_json = db.Column(JSONB)
+    metadata_json = db.Column(JSON)
 
     # relationships
     article = db.relationship("Article", back_populates="media")
