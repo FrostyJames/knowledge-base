@@ -1,11 +1,10 @@
 export default function TopBar() {
   return (
-    <header className="bg-white shadow px-6 py-4 flex items-center justify-between">
-      <h1 className="text-xl font-semibold">Dashboard</h1>
+    <header className="bg-white shadow px-6 py-4 flex justify-center">
       <input
         type="text"
-        placeholder="search..."
-        className="border rounded px-3 py-1 w-64"
+        placeholder="Search..."
+        className="border rounded px-4 py-2 w-full max-w-xl focus:outline-none focus:ring focus:border-blue-300"
       />
     </header>
   )
