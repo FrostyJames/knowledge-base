@@ -37,7 +37,7 @@ with app.app_context():
 
     db.session.add_all([user_admin, user_editor, user_employee])
 
-    # --- Categories (Departments) ---
+    # --- Categories ---
     cat_sales = Category(name="Sales", description="Knowledge base for sales processes and playbooks")
     cat_hr = Category(name="HR", description="Human Resources policies and guidelines")
     cat_perf_mgmt = Category(name="Performance Management", description="Performance appraisal and KPIs", parent=cat_hr)
@@ -45,7 +45,7 @@ with app.app_context():
 
     db.session.add_all([cat_sales, cat_hr, cat_perf_mgmt, cat_ict])
 
-    # --- Tags (General + Department-Specific) ---
+    # --- Tags ---
     tag_policy = Tag(name="Policy")
     tag_training = Tag(name="Training")
     tag_process = Tag(name="Process")
@@ -66,43 +66,59 @@ with app.app_context():
         title="Sales Playbook 2025",
         content="Covers client engagement strategies, lead qualification, and closing techniques.",
         author=user_editor,
-        category=cat_sales
+        category=cat_sales,
+        tags=[tag_process, tag_training, tag_sales_ops]
     )
-    article1.tags = [tag_process, tag_training, tag_sales_ops]
 
     article2 = Article(
         title="HR Leave Policy",
         content="Outlines procedures for annual leave, sick leave, and emergency leave requests.",
         author=user_admin,
-        category=cat_hr
+        category=cat_hr,
+        tags=[tag_policy, tag_guideline, tag_hr_policy]
     )
-    article2.tags = [tag_policy, tag_guideline, tag_hr_policy]
 
     article3 = Article(
         title="Performance Review Guidelines",
         content="Explains the appraisal cycle, key metrics, and employee feedback process.",
         author=user_editor,
-        category=cat_perf_mgmt
+        category=cat_perf_mgmt,
+        tags=[tag_policy, tag_process, tag_perf_kpi]
     )
-    article3.tags = [tag_policy, tag_process, tag_perf_kpi]
 
     article4 = Article(
         title="ICT Troubleshooting Guide",
         content="Provides solutions for common IT issues including email setup and VPN access.",
         author=user_employee,
-        category=cat_ict
+        category=cat_ict,
+        tags=[tag_tool, tag_guideline, tag_ict_support]
     )
-    article4.tags = [tag_tool, tag_guideline, tag_ict_support]
 
     article5 = Article(
         title="Onboarding Checklist",
         content="Step-by-step guide for new hires covering system access, HR forms, and training.",
         author=user_admin,
-        category=cat_hr
+        category=cat_hr,
+        tags=[tag_training, tag_process, tag_hr_policy]
     )
-    article5.tags = [tag_training, tag_process, tag_hr_policy]
 
-    db.session.add_all([article1, article2, article3, article4, article5])
+    article6 = Article(
+        title="Remote Work Policy",
+        content="Details expectations, communication norms, and equipment guidelines for remote employees.",
+        author=user_admin,
+        category=cat_hr,
+        tags=[tag_policy, tag_guideline]
+    )
+
+    article7 = Article(
+        title="Sales CRM Setup Guide",
+        content="Walkthrough for configuring CRM tools for lead tracking and reporting.",
+        author=user_editor,
+        category=cat_sales,
+        tags=[tag_tool, tag_sales_ops]
+    )
+
+    db.session.add_all([article1, article2, article3, article4, article5, article6, article7])
 
     # --- Article Media ---
     media1 = ArticleMedia(article=article1, media_type="pdf",
@@ -120,9 +136,15 @@ with app.app_context():
     media5 = ArticleMedia(article=article5, media_type="doc",
                           url="https://company.com/media/onboarding.docx",
                           metadata_json={"words": 1200})
+    media6 = ArticleMedia(article=article6, media_type="pdf",
+                          url="https://company.com/media/remote_work_policy.pdf",
+                          metadata_json={"pages": 12})
+    media7 = ArticleMedia(article=article7, media_type="doc",
+                          url="https://company.com/media/crm_setup_guide.docx",
+                          metadata_json={"words": 800})
 
-    db.session.add_all([media1, media2, media3, media4, media5])
+    db.session.add_all([media1, media2, media3, media4, media5, media6, media7])
 
     # Commit everything
     db.session.commit()
-    print("Company knowledge base seeded successfully with server-side UTC timestamps!")
+    print("✅ Company knowledge base seeded with 7 articles and media attachments!")
