@@ -3,12 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy import Column, Integer, String, JSON
 from extensions import db
-# from sqlalchemy.dialects.postgresql import JSONB
 
 
-# -----------------------------
-# Association Tables
-# -----------------------------
 
 class UserRole(db.Model):
     __tablename__ = "user_roles"
