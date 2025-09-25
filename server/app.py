@@ -35,8 +35,24 @@ def create_app():
     def get_articles():
         articles = Article.query.all()
         return jsonify([article.serialize() for article in articles]), 200
+    
+    from app_routes.articles import register_article_routes
+    register_article_routes(app)
 
-    # Optional: catch-all for unsupported methods (for the app, not individual route)
+    from app_routes.categories import register_category_routes
+    register_category_routes(app)
+
+    from app_routes.roles import register_role_routes
+    register_role_routes(app)
+
+    from app_routes.permissions import register_permission_routes
+    register_permission_routes(app)
+
+    from app_routes.media import register_media_routes
+    register_media_routes(app)
+    
+
+    # catch-all for unsupported methods (for the app, not individual route)
     @app.errorhandler(405)
     def method_not_allowed(e):
         return jsonify({"text": "Method Not Allowed"}), 405
