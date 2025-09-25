@@ -76,3 +76,27 @@ def register_category_routes(app):
 
         db.session.commit()
         return make_response(jsonify(category.serialize()), 200)
+    
+    # DELETE a category
+    @app.route('/categories/<int:category_id>', methods=['DELETE'])
+    def delete_category(category_id):
+        category = Category.query.get(category_id)
+        if not category:
+            return make_response(jsonify({"error": "Category not found"}), 404)
+
+        # check if category has children
+        if category.children:
+            return make_response(
+                jsonify({"error": "Cannot delete category with subcategories"}), 400
+            )
+
+        # check if category has articles
+        if category.articles:
+            return make_response(
+                jsonify({"error": "Cannot delete category with articles"}), 400
+            )
+
+        db.session.delete(category)
+        db.session.commit()
+
+        return make_response(jsonify({"message": "Category deleted successfully"}), 200)
