@@ -35,6 +35,9 @@ def create_app():
     def get_articles():
         articles = Article.query.all()
         return jsonify([article.serialize() for article in articles]), 200
+    
+    from app_routes.articles import register_article_routes
+    register_article_routes(app)
 
     # Optional: catch-all for unsupported methods (for the app, not individual route)
     @app.errorhandler(405)
