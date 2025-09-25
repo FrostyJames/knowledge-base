@@ -106,47 +106,30 @@ To run the project locally, you will need:
 
 ---
 
-## Installation Process
-
-### 1. Clone the repository
-```bash
+  # Installation Process
+1. Clone the Repository
 git clone git@github.com:FrostyJames/knowledge-base.git
 cd knowledge-base
-2. Set up the backend
-bash
-pipenv install 
-pipenv shell
+
+2.  Set Up the Backend (Flask)
+
+3.  Create and activate a virtual environment, then install the dependencies:
+
+  - pipenv install
+  - pipenv shell
+  - pipenv install -r requirements.txt
 
 
-pipenv  install -r requirements.txt
+4. Set environment variables and run the server:
 
 export FLASK_APP=app.py
 export FLASK_ENV=development
 flask run
-3. Set up the frontend
-bash
-Copy code
-cd client
-npm install
-npm start
-Your app will be available at:
 
-Backend: http://localhost:5000
 
-Frontend: http://localhost:3000
+The backend will start at:
+ http://localhost:5000
 
-Technologies Used
-Flask (Python)
-
-SQLAlchemy
-
-JWT / Flask-Login
-
-React
-
-HTML5 / CSS3
-
-JavaScript (ES6+)
 
 Related Repositories
 Frontend Repo: Knowledge Base Frontend (if split)
