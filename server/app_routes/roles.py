@@ -26,3 +26,20 @@ def register_role_routes(app):
         db.session.commit()
 
         return make_response(jsonify(new_role.serialize()), 201)
+
+    
+    # PATCH/EDIT role
+    @app.route('/roles/<int:role_id>', methods=['PATCH'])
+    def edit_role(role_id):
+        role = Role.query.get(role_id)
+        if not role:
+            return make_response(jsonify({"error": "Role not found"}), 404)
+
+        data = request.get_json()
+        if "name" in data:
+            role.name = data["name"]
+        if "description" in data:
+            role.description = data["description"]
+
+        db.session.commit()
+        return make_response(jsonify(role.serialize()), 200)
