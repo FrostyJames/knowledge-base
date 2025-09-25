@@ -42,3 +42,15 @@ def register_permission_routes(app):
         db.session.commit()
         return make_response(jsonify(permission.serialize()), 200)
     
+    
+    # DELETE permission
+    @app.route('/permissions/<int:permission_id>', methods=['DELETE'])
+    def delete_permission(permission_id):
+        permission = Permission.query.get(permission_id)
+        if not permission:
+            return make_response(jsonify({"error": "Permission not found"}), 404)
+
+        db.session.delete(permission)
+        db.session.commit()
+        return make_response(jsonify({"message": "Permission deleted"}), 200)
+    
