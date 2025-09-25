@@ -2,7 +2,7 @@
 
 **Knowledge Base** – a collaborative platform designed to help users create, manage, and share information efficiently. It allows user registration, secure login, and full CRUD functionality for managing knowledge entries. Built with a **Flask backend** and a **React frontend**, this project showcases seamless integration between a Python API and a modern JavaScript interface.
 
-By James Ivan  & Team
+By James Ivan, Martin muthaura, Susan wanjiru, Edwin mwaniki, Caleb muindi
 
 ---
 
@@ -99,7 +99,7 @@ The live app allows you to:
 
 To run the project locally, you will need:
 
-- Python & pip installed  
+- Python & pipenv installed  
 - Node.js installed  
 - Basic understanding of Flask and React  
 - Command line / Terminal access
@@ -114,12 +114,11 @@ git clone git@github.com:FrostyJames/knowledge-base.git
 cd knowledge-base
 2. Set up the backend
 bash
-Copy code
-python3 -m venv venv
-source venv/bin/activate   # (Linux / Mac)
+pipenv install 
+pipenv shell
 
 
-pip install -r requirements.txt
+pipenv  install -r requirements.txt
 
 export FLASK_APP=app.py
 export FLASK_ENV=development
@@ -178,11 +177,14 @@ DELETE /entries/<id> – Delete entry
 Support & Contact Details
 If you have questions, suggestions, or need support, please reach out:
 
- Email: 
+ Email: james.ivan@student.moringaschool.com
 
- Email: 
+ Email: Martin.muthaura@student.moringaschool.com
 
- Email:
+ Email: edwin.mwaniki@student.moringaschool.com
+
+ Email: susan.wanjiru1@student.moringaschool.com
+
 License
 MIT License
 
