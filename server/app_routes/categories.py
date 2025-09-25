@@ -9,7 +9,6 @@ def register_category_routes(app):
     @app.route('/categories', methods=['GET'])
     def get_categories():
         categories = Category.query.all()
-
         return make_response(
             jsonify([category.serialize() for category in categories]), 
             200

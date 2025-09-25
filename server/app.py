@@ -43,13 +43,13 @@ def create_app():
     register_category_routes(app)
 
     from app_routes.roles import register_role_routes
-    register_role_routes
+    register_role_routes(app)
 
     from app_routes.permissions import register_permission_routes
-    register_permission_routes
+    register_permission_routes(app)
 
     from app_routes.media import register_media_routes
-    register_media_routes
+    register_media_routes(app)
     
 
     # catch-all for unsupported methods (for the app, not individual route)

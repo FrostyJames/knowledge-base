@@ -7,7 +7,9 @@ def register_role_routes(app):
     @app.route('/roles', methods=['GET'])
     def get_roles():
         roles = Role.query.all()
-        return make_response(jsonify([role.serialize() for role in roles]), 200)
+        return make_response(
+            jsonify([role.serialize() for role in roles]), 
+            200)
 
     # POST/CREATE a role
     @app.route('/roles', methods=['POST'])
