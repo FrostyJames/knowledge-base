@@ -6,6 +6,8 @@ from extensions import db
 
 def register_article_routes(app):
 
+    # POST/CREATE an article
+
     @app.route('/articles', methods=['POST'])
     def create_article():
         data = request.get_json()
@@ -28,7 +30,8 @@ def register_article_routes(app):
         db.session.add(new_article)
         db.session.commit()
         return make_response(jsonify(new_article.to_dict()), 201)
-
+    
+    # EDIT an article
     @app.route('/articles/<int:id>', methods=['PATCH'])
     def edit_article(id):
         article = Article.query.get_or_404(id)
@@ -55,9 +58,20 @@ def register_article_routes(app):
         db.session.commit()
         return make_response(jsonify(article.to_dict()), 200)
     
-    
+    # GET an article
     @app.route('/articles/<int:id>', methods=['GET'])
     def get_article(id):
         article = Article.query.get_or_404(id)
         return make_response(jsonify(article.to_dict()), 200)
     
+    # DELETE an article
+    def delete_article(article_id):
+        article = Article.query.get(article_id)
+        if not article:
+            return make_response(jsonify({"error": "Article not found"}), 404)
+
+        db.session.delete(article)
+        db.session.commit()
+
+        return make_response(jsonify({"message": f"Article {article_id} deleted"}), 200)
+        
