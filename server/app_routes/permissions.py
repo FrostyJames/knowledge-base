@@ -26,3 +26,19 @@ def register_permission_routes(app):
 
         return make_response(jsonify(new_permission.serialize()), 201)
     
+    # PATCH/EDIT permission
+    @app.route('/permissions/<int:permission_id>', methods=['PATCH'])
+    def edit_permission(permission_id):
+        permission = Permission.query.get(permission_id)
+        if not permission:
+            return make_response(jsonify({"error": "Permission not found"}), 404)
+
+        data = request.get_json()
+        if "name" in data:
+            permission.name = data["name"]
+        if "description" in data:
+            permission.description = data["description"]
+
+        db.session.commit()
+        return make_response(jsonify(permission.serialize()), 200)
+    
