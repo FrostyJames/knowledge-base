@@ -96,4 +96,15 @@ def register_media_routes(app):
 
         db.session.commit()
         return jsonify(media.serialize()), 200
+    
+    # DELETE media
+    @app.route('/media/<int:id>', methods=['DELETE'])
+    def delete_media(id):
+        media = ArticleMedia.query.get(id)
+        if not media:
+            return jsonify({"error": "Media not found"}), 404
+
+        db.session.delete(media)
+        db.session.commit()
+        return jsonify({"message": "Media deleted"}), 200
 
