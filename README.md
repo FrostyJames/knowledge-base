@@ -130,6 +130,7 @@ flask run
 The backend will start at:
  http://localhost:5000
 
+--- 
 
 Related Repositories
 Frontend Repo: Knowledge Base Frontend (if split)
@@ -139,7 +140,10 @@ Backend Repo: Knowledge Base API (if split)
 Live App: Deployed Version (if available)
 
 Backend API
-Authentication Routes:
+
+---
+
+### Authentication Routes:
 
 POST /signup – Register a new user
 
@@ -157,7 +161,9 @@ PATCH /entries/<id> – Update entry
 
 DELETE /entries/<id> – Delete entry
 
-Support & Contact Details
+---
+
+### Support & Contact Details
 If you have questions, suggestions, or need support, please reach out:
 
  Email: james.ivan@student.moringaschool.com
