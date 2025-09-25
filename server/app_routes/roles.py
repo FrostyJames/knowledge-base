@@ -43,3 +43,14 @@ def register_role_routes(app):
 
         db.session.commit()
         return make_response(jsonify(role.serialize()), 200)
+    
+     # DELETE role
+    @app.route('/roles/<int:role_id>', methods=['DELETE'])
+    def delete_role(role_id):
+        role = Role.query.get(role_id)
+        if not role:
+            return make_response(jsonify({"error": "Role not found"}), 404)
+
+        db.session.delete(role)
+        db.session.commit()
+        return make_response(jsonify({"message": "Role deleted"}), 200)
