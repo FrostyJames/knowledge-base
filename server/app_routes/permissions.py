@@ -3,6 +3,12 @@ from models import db, Permission
 
 def register_permission_routes(app):
 
+    # GET all permissions
+    @app.route('/permissions', methods=['GET'])
+    def get_permissions():
+        permissions = Permission.query.all()
+        return make_response(jsonify([p.serialize() for p in permissions]), 200)
+
     # CREATE permission
     @app.route('/permissions', methods=['POST'])
     def create_permission():
@@ -19,5 +25,4 @@ def register_permission_routes(app):
         db.session.commit()
 
         return make_response(jsonify(new_permission.serialize()), 201)
-    
     
