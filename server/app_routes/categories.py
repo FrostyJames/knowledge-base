@@ -15,6 +15,10 @@ def register_category_routes(app):
 
         parent_id = data.get("parent_id")
 
+        # Category cannot be its own parent
+        if parent_id is not None and "id" in data and parent_id == data["id"]:
+            return make_response(jsonify({"error": "Category cannot be its own parent"}), 400)
+
         # Validate parent_id (if provided)
         if parent_id is not None:
             parent = Category.query.get(parent_id)
@@ -31,4 +35,4 @@ def register_category_routes(app):
 
         db.session.add(new_category)
         db.session.commit()
-        return make_response(jsonify(new_category.to_dict()), 201)
+        return make_response(jsonify(new_category.serialize()), 201)
