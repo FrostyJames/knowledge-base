@@ -36,3 +36,43 @@ def register_category_routes(app):
         db.session.add(new_category)
         db.session.commit()
         return make_response(jsonify(new_category.serialize()), 201)
+    
+    # PATCH/UPDATE a category
+    @app.route('/categories/<int:category_id>', methods=['PATCH'])
+    def update_category(category_id):
+        category = Category.query.get(category_id)
+        if not category:
+            return make_response(jsonify({"error": "Category not found"}), 404)
+
+        data = request.get_json()
+
+        # Update name
+        if "name" in data:
+            category.name = data["name"]
+
+        # Update description
+        if "description" in data:
+            category.description = data["description"]
+
+        # Update parent_id
+        if "parent_id" in data:
+            parent_id = data["parent_id"]
+
+            if parent_id == category.id:
+                return make_response(
+                    jsonify({"error": "Category cannot be its own parent"}),
+                    400,
+                )
+
+            if parent_id is not None:
+                parent = Category.query.get(parent_id)
+                if not parent:
+                    return make_response(
+                        jsonify({"error": "Parent category not found"}), 404
+                    )
+                category.parent_id = parent.id
+            else:
+                category.parent_id = None
+
+        db.session.commit()
+        return make_response(jsonify(category.serialize()), 200)
