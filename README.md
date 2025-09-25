@@ -185,6 +185,8 @@ If you have questions, suggestions, or need support, please reach out:
 
  Email: susan.wanjiru1@student.moringaschool.com
 
+ Email: Caleb.muindi@student.moringaschool.com
+
 License
 MIT License
 
