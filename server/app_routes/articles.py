@@ -56,3 +56,8 @@ def register_article_routes(app):
         return make_response(jsonify(article.to_dict()), 200)
     
     
+    @app.route('/articles/<int:id>', methods=['GET'])
+    def get_article(id):
+        article = Article.query.get_or_404(id)
+        return make_response(jsonify(article.to_dict()), 200)
+    
