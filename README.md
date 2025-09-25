@@ -121,13 +121,12 @@ cd knowledge-base
 
 
 4. Set environment variables and run the server:
+  - export FLASK_APP=app.py
+  - export FLASK_ENV=development
+  - flask run
 
-export FLASK_APP=app.py
-export FLASK_ENV=development
-flask run
 
-
-The backend will start at:
+ The backend will start at:
  http://localhost:5000
 
 --- 
@@ -176,7 +175,10 @@ If you have questions, suggestions, or need support, please reach out:
 
  Email: Caleb.muindi@student.moringaschool.com
 
-License
+ ---
+
+
+### License
 MIT License
 
 Copyright © 2025 Knowledge Base — James Ivan & Contributors
