@@ -1,75 +1,194 @@
-# knowledge-base
- Full-stack internal documentation platform for storing articles, procedures, and videos.
-A collaborative knowledge-base web application built with **Flask** (backend) and **React** (frontend).  
-This project allows users to manage accounts, create, read, update, and delete entries, and interact with a shared knowledge repository.
+# Knowledge Base
+
+**Knowledge Base** – a collaborative platform designed to help users create, manage, and share information efficiently. It allows user registration, secure login, and full CRUD functionality for managing knowledge entries. Built with a **Flask backend** and a **React frontend**, this project showcases seamless integration between a Python API and a modern JavaScript interface.
+
+By James Ivan  & Team
 
 ---
 
-## **Features**
+## User Stories
 
-- User registration and login with secure authentication
-- Create, read, update, and delete (CRUD) knowledge entries
-- Form validation on frontend and backend
-- Role-based access (optional)
-- Responsive React frontend with modern UI
-- RESTful API with Flask backend
+- As a **new user**, I want to register an account so I can access the knowledge base.
+- As a **registered user**, I want to log in securely so that my information is protected.
+- As a **user**, I want to **create, view, edit, and delete** knowledge entries so I can manage information effectively.
+- As a **system admin**, I want to view all users and their contributions so I can monitor platform usage.
+- As a **user**, I want to see all my contributions over time so I can track what I’ve added.
 
+---
 
-## **Tech Stack**
+## Data Entity Structure
 
-- **Backend:** Flask, SQLAlchemy, Flask-Migrate
-- **Frontend:** React, Fetch API
-- **Database:** SQLite (default, can be switched to PostgreSQL)
-- **Authentication:** Flask sessions / JWT (depending on implementation)
+**Users** → `{ id, name, email, password_hash, created_at }`  
+**Entries** → `{ id, user_id, title, content, created_at, updated_at }`  
+**Sessions / Tokens** → `{ id, user_id, token, expires_at }`
 
-### How to start and run the application
+---
 
-### **1. Clone the repository**
+## Features
+
+###  Main Sections
+
+- User Authentication  
+- Knowledge Entries CRUD  
+- Admin Dashboard  
+- Profile & Activity Tracking  
+- Search and Filter Functionality  
+
+---
+
+###  User Management
+
+- Register a new user  
+- Secure login with password hashing  
+- JWT-based authentication  
+- Logout functionality  
+
+---
+
+### Knowledge Entries
+
+- Create new knowledge entries  
+- Edit and update existing entries  
+- Delete entries  
+- View all entries or filter by user/date  
+
+---
+
+###  Admin Section
+
+- View all users and their contributions  
+- Monitor platform usage  
+- View total entries, active users, and more
+
+---
+
+## Extra Features
+
+- Full **form validation** on frontend and backend  
+- Input validation for title, content, and user details  
+- Protected routes using JWT  
+- Responsive UI built with React  
+- RESTful API architecture  
+
+---
+
+## System Requirements
+
+- Python 3.8+  
+- Node.js 18+  
+- npm or yarn  
+- Git  
+- VS Code or any modern code editor  
+
+---
+
+## How to Use
+
+This is a **Flask + React** web application. You can run the backend server locally and access the frontend from your browser.
+
+The live app allows you to:
+
+- Register and log in as a user  
+- Browse knowledge entries  
+- Create, update, and delete information  
+- Access admin insights (if authorized)  
+
+---
+
+## Local Development
+
+To run the project locally, you will need:
+
+- Python & pip installed  
+- Node.js installed  
+- Basic understanding of Flask and React  
+- Command line / Terminal access
+
+---
+
+## Installation Process
+
+### 1. Clone the repository
 ```bash
-git clone 
-
- Set up the Flask backend
+git clone git@github.com:FrostyJames/knowledge-base.git
+cd knowledge-base
+2. Set up the backend
 bash
 Copy code
-
 python3 -m venv venv
-source venv/bin/activate on LINUX 
- venv\Scripts\activate    on Windows
+source venv/bin/activate   # (Linux / Mac)
 
- Install dependencies
+
 pip install -r requirements.txt
 
- Set environment variables
 export FLASK_APP=app.py
 export FLASK_ENV=development
-
- Run the backend
 flask run
-
-
- Set up the React frontend
-npm install
-npm start
-Your React app should run at http://localhost:3000 and connect to Flask backend at http://localhost:5000.
-
-Usage
-Navigate to the frontend in your browser.
-
-Register a new account or log in.
-
-Use the forms to create, view, update, or delete knowledge entries.
-
-All forms are validated both on frontend and backend.
-
-Folder Structure
+3. Set up the frontend
 bash
 Copy code
-knowledge-base/
-├─ app.py                
-├─ requirements.txt      
-├─ client/               
-│   ├─ src/
-│   │   ├─ components/   
-│   │   └─ App.js
-└─ backend/               
+cd client
+npm install
+npm start
+Your app will be available at:
 
+Backend: http://localhost:5000
+
+Frontend: http://localhost:3000
+
+Technologies Used
+Flask (Python)
+
+SQLAlchemy
+
+JWT / Flask-Login
+
+React
+
+HTML5 / CSS3
+
+JavaScript (ES6+)
+
+Related Repositories
+Frontend Repo: Knowledge Base Frontend (if split)
+
+Backend Repo: Knowledge Base API (if split)
+
+Live App: Deployed Version (if available)
+
+Backend API
+Authentication Routes:
+
+POST /signup – Register a new user
+
+POST /login – Log in and receive token
+
+POST /logout – Log out user
+
+Entries Routes:
+
+GET /entries – View all entries
+
+POST /entries – Create new entry
+
+PATCH /entries/<id> – Update entry
+
+DELETE /entries/<id> – Delete entry
+
+Support & Contact Details
+If you have questions, suggestions, or need support, please reach out:
+
+ Email: 
+
+ Email: 
+
+ Email:
+License
+MIT License
+
+Copyright © 2025 Knowledge Base — James Ivan & Contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+About
+Knowledge Base – a collaborative digital platform that empowers users to create, manage, and share information efficiently. Built with Flask, React, SQLAlchemy, and JWT authentication, this project demonstrates full-stack development best practices.
