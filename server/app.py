@@ -48,4 +48,8 @@ def create_app():
     def method_not_allowed(e):
         return jsonify({"text": "Method Not Allowed"}), 405
 
+    # Ensure migrations run on startup
+    with app.app_context():
+        upgrade()
+
     return app
