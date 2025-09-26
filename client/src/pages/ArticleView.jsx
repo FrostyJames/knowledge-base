@@ -13,15 +13,8 @@ export default function ArticleView() {
   const [formContent, setFormContent] = useState("");
 
   useEffect(() => {
-    fetchArticles();
-  }, []);
-
-  const fetchArticles = () => {
     fetch('http://localhost:5000/articles')
-      .then(res => {
-        if (!res.ok) throw new Error(`Server error: ${res.status}`);
-        return res.json();
-      })
+      .then(res => res.json())
       .then(data => setArticles(data))
       .catch(err => console.error('Error fetching articles:', err));
   };
