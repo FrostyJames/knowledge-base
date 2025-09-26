@@ -1,41 +1,33 @@
-from flask import Flask, request, make_response, jsonify
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from sqlalchemy import MetaData
-from flask_cors import CORS 
-from flask_migrate import Migrate
+from flask_cors import CORS
 from flask_restful import Api
-from extensions import db, migrate  # import from extensions
-
+from extensions import db, migrate
 
 def create_app():
     app = Flask(__name__)
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///knowbase.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-     
     db.init_app(app)
     migrate.init_app(app, db)
+
+    # ✅ Enable CORS for your frontend origin
+    CORS(app, origins=["http://127.0.0.1:5173"], supports_credentials=True)
 
     # Instantiate REST API
     api = Api(app)
 
-    # Instantiate CORS
-    CORS(app)
-
-
-    # Import models so migrations see them
+    # Import models so migrations detect them
     from models import User, Role, Permission, Category, Article, Tag, ArticleMedia
 
+    # Health check route
     @app.route("/")
     def home():
         return jsonify({"message": "Knowledge Base API running"}), 200
-    
-    @app.route('/articles', methods=['GET'])
-    def get_articles():
-        articles = Article.query.all()
-        return jsonify([article.serialize() for article in articles]), 200
-    
+
+    # Register all route modules
     from app_routes.articles import register_article_routes
     register_article_routes(app)
 
@@ -50,12 +42,10 @@ def create_app():
 
     from app_routes.media import register_media_routes
     register_media_routes(app)
-    
 
-    # catch-all for unsupported methods (for the app, not individual route)
+    # Catch-all for unsupported methods
     @app.errorhandler(405)
     def method_not_allowed(e):
         return jsonify({"text": "Method Not Allowed"}), 405
-
 
     return app
