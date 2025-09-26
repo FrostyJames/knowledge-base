@@ -61,7 +61,7 @@ def seed_users():
     
     db.session.add_all([user_admin, user_editor, user_employee])
     
- def seed_categories():
+def seed_categories():
     # --- Categories ---
     cat_sales = Category(name="Sales", description="Knowledge base for sales processes and playbooks")
     cat_hr = Category(name="HR", description="Human Resources policies and guidelines")
@@ -69,8 +69,8 @@ def seed_users():
     cat_ict = Category(name="ICT", description="ICT support, troubleshooting, and system guides")
     
     db.session.add_all([cat_sales, cat_hr, cat_perf_mgmt, cat_ict])
-    
- def seed_tags():
+
+def seed_tags():
      # --- Tags ---
     tag_policy = Tag(name="Policy")
     tag_training = Tag(name="Training")
