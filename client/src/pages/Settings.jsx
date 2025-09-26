@@ -1,9 +1,27 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react';
 
 export default function Settings() {
-  const [darkMode, setDarkMode] = useState(false)
-  const [notifications, setNotifications] = useState(true)
-  const [language, setLanguage] = useState('en')
+  const [darkMode, setDarkMode] = useState(false);
+  const [notifications, setNotifications] = useState(true);
+  const [language, setLanguage] = useState('en');
+
+  // Load settings from localStorage on mount
+  useEffect(() => {
+    const storedDark = localStorage.getItem('darkMode') === 'true';
+    const storedNotify = localStorage.getItem('notifications') === 'true';
+    const storedLang = localStorage.getItem('language') || 'en';
+
+    setDarkMode(storedDark);
+    setNotifications(storedNotify);
+    setLanguage(storedLang);
+  }, []);
+
+  // Save settings to localStorage on change
+  useEffect(() => {
+    localStorage.setItem('darkMode', darkMode);
+    localStorage.setItem('notifications', notifications);
+    localStorage.setItem('language', language);
+  }, [darkMode, notifications, language]);
 
   return (
     <div className="h-full w-full bg-white p-6 rounded shadow max-w-3xl mx-auto space-y-6">
@@ -58,5 +76,5 @@ export default function Settings() {
         <button className="text-red-600 hover:underline">Delete Account</button>
       </section>
     </div>
-  )
+  );
 }
