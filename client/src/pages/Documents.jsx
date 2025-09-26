@@ -1,140 +1,98 @@
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import seedData from '../data/seed.json';
+import Modal from '../components/Modal';
 
 export default function Documents() {
   const [documents, setDocuments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [newDoc, setNewDoc] = useState({
-    article_id: '',
-    media_type: '',
-    url: ''
-  });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [newDoc, setNewDoc] = useState({ title: '', filename: '', media_type: '', url: '' });
 
-  useEffect(() => {
-    fetchDocuments();
-  }, []);
-
-  const fetchDocuments = () => {
-    fetch('http://localhost:5000/documents')
-      .then((res) => res.json())
-      .then((data) => {
-        setDocuments(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching documents:', err);
-        setLoading(false);
-      });
-  };
+  useEffect(() => setDocuments(seedData.documents), []);
 
   const handleAdd = () => {
-    const { article_id, media_type, url } = newDoc;
-    if (!article_id || !media_type || !url) return;
-
-    fetch('http://localhost:5000/media', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        article_id,
-        media_type,
-        url,
-        metadata_json: { description: 'Linked via URL' }
-      })
-    })
-      .then((res) => res.json())
-      .then(() => {
-        setNewDoc({ article_id: '', media_type: '', url: '' });
-        fetchDocuments();
-      })
-      .catch((err) => console.error('Upload failed:', err));
-  };
-
-  const handleDelete = (id) => {
-    fetch(`http://localhost:5000/media/${id}`, { method: 'DELETE' })
-      .then(() => fetchDocuments())
-      .catch((err) => console.error('Delete failed:', err));
+    setDocuments([...documents, { id: documents.length + 1, ...newDoc }]);
+    setNewDoc({ title: '', filename: '', media_type: '', url: '' });
+    setIsModalOpen(false);
   };
 
   const getIcon = (type) => {
     switch (type) {
       case 'pdf': return '📄';
-      case 'docx': return '📁';
-      case 'mp4':
-      case 'mov': return '🎥';
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-      case 'gif': return '🖼️';
+      case 'mp4': return '🎥';
       default: return '📎';
     }
   };
 
   return (
-    <div className="h-full w-full bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-semibold mb-4">Documents</h2>
-
-      {/* Add New Document */}
-      <div className="mb-6 space-y-2">
-        <input
-          type="text"
-          placeholder="Article ID"
-          value={newDoc.article_id}
-          onChange={(e) => setNewDoc({ ...newDoc, article_id: e.target.value })}
-          className="border p-2 w-full"
-        />
-        <input
-          type="text"
-          placeholder="Media Type (pdf, mp4, etc)"
-          value={newDoc.media_type}
-          onChange={(e) => setNewDoc({ ...newDoc, media_type: e.target.value })}
-          className="border p-2 w-full"
-        />
-        <input
-          type="text"
-          placeholder="Media URL (e.g. https://...)"
-          value={newDoc.url}
-          onChange={(e) => setNewDoc({ ...newDoc, url: e.target.value })}
-          className="border p-2 w-full"
-        />
+    <div className="p-6 bg-gray-900 text-gray-100 min-h-full">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">Documents</h2>
         <button
-          onClick={handleAdd}
-          className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
-          disabled={!newDoc.article_id || !newDoc.media_type || !newDoc.url}
+          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
+          onClick={() => setIsModalOpen(true)}
         >
           Add Document
         </button>
       </div>
 
-      {/* Document List */}
-      {loading ? (
-        <p>Loading...</p>
-      ) : documents.length === 0 ? (
-        <p className="text-gray-600">No documents found.</p>
-      ) : (
-        <ul className="space-y-4">
-          {documents.map((doc) => (
-            <li key={`${doc.article_id}-${doc.filename}`} className="flex justify-between items-center border-b pb-2">
-              <div>
-                <span className="text-2xl mr-2">{getIcon(doc.media_type)}</span>
-                <strong>{doc.title}</strong> — {doc.media_type.toUpperCase()}
-                <a
-                  href={doc.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-2 text-blue-600 hover:underline"
-                >
-                  {doc.filename}
-                </a>
-              </div>
-              <button
-                onClick={() => handleDelete(doc.id)}
-                className="text-red-600 hover:underline"
-              >
-                Delete
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+      <ul className="space-y-4">
+        {documents.map((doc) => (
+          <li key={doc.id} className="flex justify-between items-center bg-gray-800 p-3 rounded shadow hover:shadow-lg transition">
+            <div>
+              {getIcon(doc.media_type)} <strong>{doc.title}</strong> — {doc.media_type.toUpperCase()}
+              <a href={doc.url} className="ml-2 text-indigo-400 hover:underline">{doc.filename}</a>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      {/* Modal */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Add New Document">
+        <div className="space-y-3">
+          <input
+            type="text"
+            placeholder="Title"
+            value={newDoc.title}
+            onChange={(e) => setNewDoc({ ...newDoc, title: e.target.value })}
+            className="w-full px-3 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
+          />
+          <input
+            type="text"
+            placeholder="Filename"
+            value={newDoc.filename}
+            onChange={(e) => setNewDoc({ ...newDoc, filename: e.target.value })}
+            className="w-full px-3 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
+          />
+          <input
+            type="text"
+            placeholder="Media Type (pdf, mp4)"
+            value={newDoc.media_type}
+            onChange={(e) => setNewDoc({ ...newDoc, media_type: e.target.value })}
+            className="w-full px-3 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
+          />
+          <input
+            type="text"
+            placeholder="URL"
+            value={newDoc.url}
+            onChange={(e) => setNewDoc({ ...newDoc, url: e.target.value })}
+            className="w-full px-3 py-2 rounded bg-gray-700 text-gray-100 border border-gray-600"
+          />
+          <div className="flex justify-end gap-2 mt-2">
+            <button
+              className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded"
+              onClick={() => setIsModalOpen(false)}
+            >
+              Cancel
+            </button>
+            <button
+              className="bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded text-white"
+              onClick={handleAdd}
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }

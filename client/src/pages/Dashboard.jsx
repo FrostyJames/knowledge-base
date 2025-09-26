@@ -1,32 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import seedData from '../data/seed.json';
 
 export default function Dashboard({ searchTerm }) {
   const [documents, setDocuments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [articles, setArticles] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:5000/documents')
-      .then((res) => res.json())
-      .then((data) => {
-        setDocuments(data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Error fetching documents:', err);
-        setLoading(false);
-      });
+    setDocuments(seedData.documents);
+    setArticles(seedData.articles);
   }, []);
 
   const getIcon = (type) => {
     switch (type) {
       case 'pdf': return '📄';
-      case 'docx': return '📁';
-      case 'mp4':
-      case 'mov': return '🎥';
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
-      case 'gif': return '🖼️';
+      case 'mp4': return '🎥';
       default: return '📎';
     }
   };
@@ -36,34 +23,48 @@ export default function Dashboard({ searchTerm }) {
     doc.filename.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
+  const filteredArticles = articles.filter((art) =>
+    art.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    art.category.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-      {loading ? (
-        <p className="text-gray-600">Loading documents...</p>
-      ) : filteredDocuments.length === 0 ? (
-        <p className="text-gray-600">No matching documents found.</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredDocuments.map((doc) => (
-            <div key={`${doc.article_id}-${doc.filename}`} className="bg-white p-4 rounded shadow">
-              <h2 className="text-lg font-semibold mb-2">
-                {getIcon(doc.media_type)} {doc.title}
-              </h2>
-              <p className="text-sm text-gray-600 mb-2">{doc.media_type.toUpperCase()}</p>
-              <a
-                href={doc.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 hover:underline text-sm"
-              >
-                {doc.filename}
-              </a>
-            </div>
-          ))}
-        </div>
-      )}
+  return (
+    <div className="p-6 bg-gray-900 text-gray-100 min-h-full">
+      <h2 className="text-2xl font-bold mb-6">Hospital Dashboard</h2>
+
+      <section className="mb-8">
+        <h3 className="text-xl font-semibold mb-4">Documents</h3>
+        {filteredDocuments.length === 0 ? (
+          <p>No matching documents found.</p>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {filteredDocuments.map((doc) => (
+              <div key={doc.id} className="bg-gray-800 p-4 rounded shadow hover:shadow-lg transition">
+                <h4 className="text-lg font-semibold mb-2">
+                  {getIcon(doc.media_type)} {doc.title}
+                </h4>
+                <p className="text-sm text-gray-400">{doc.media_type.toUpperCase()}</p>
+                <a href={doc.url} className="text-indigo-400 hover:underline text-sm">{doc.filename}</a>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section>
+        <h3 className="text-xl font-semibold mb-4">Articles</h3>
+        {filteredArticles.length === 0 ? (
+          <p>No matching articles found.</p>
+        ) : (
+          <ul className="space-y-3">
+            {filteredArticles.map((art) => (
+              <li key={art.id} className="bg-gray-800 p-3 rounded shadow hover:shadow-lg transition">
+                <strong>{art.title}</strong> — <span className="text-gray-400">{art.category}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }
