@@ -1,5 +1,21 @@
-__pycache__/
-*.pyc
 .env
-knowledge.db
-instance/
+knowbase.db
+
+# Dependency directories
+node_modules
+jspm_packages
+
+# pytest cache
+.pytest_cache
+__pycache__
+*.pyc
+
+# database
+*.db
+instance
+.vscode
+package-lock.json
+
+listofcommands.txt
+edwin-models-backup.zip
+edwin-crud-backup.zip

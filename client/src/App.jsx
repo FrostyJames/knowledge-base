@@ -1,35 +1,35 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Sidebar from './components/Sidebar';
+import TopBar from './components/TopBar';
+import Dashboard from './pages/Dashboard';
+import Documents from './pages/Documents';
+import Settings from './pages/Settings';
+import ArticleView from './pages/ArticleView';
 
-function App() {
-  const [count, setCount] = useState(0)
+export default function App() {
+  const [searchTerm, setSearchTerm] = useState('');
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar navigation */}
+      <Sidebar />
 
-export default App
+      {/* Main content area */}
+      <div className="flex flex-col flex-1">
+        <TopBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+        <main className="flex-1 overflow-y-auto">
+          <div className="min-h-full p-6">
+            <Routes>
+              <Route path="/" element={<Dashboard searchTerm={searchTerm} />} />
+              <Route path="/documents" element={<Documents />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/articles" element={<ArticleView />} />
+            </Routes>
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
