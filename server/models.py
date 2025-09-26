@@ -120,7 +120,6 @@ class Article(db.Model):
     content = db.Column(db.Text)
     author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     category_id = db.Column(db.Integer, db.ForeignKey("categories.id"))
-   # Use database-side defaults
     created_at = db.Column(db.DateTime, server_default=func.now(), nullable=False)
     updated_at = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 
@@ -135,13 +134,12 @@ class Article(db.Model):
             "id": self.id,
             "title": self.title,
             "content": self.content,
-            "author": self.author.name if self.author else None,
-            "category": self.category.name if self.category else None,
+            "author": getattr(self.author, "name", "Unknown"),
+            "category": getattr(self.category, "name", "Uncategorized"),
             "tags": [t.name for t in self.tags],
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
-
 
 class Tag(db.Model):
     __tablename__ = "tags"
