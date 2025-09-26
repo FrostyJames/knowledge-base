@@ -1,8 +1,6 @@
 # seed.py
-from app import create_app, db
+from app import app, db
 from models import User, Role, Permission, Category, Tag, Article, ArticleMedia
-
-app = create_app()
 
 with app.app_context():
     # Drop and recreate tables for clean seeding

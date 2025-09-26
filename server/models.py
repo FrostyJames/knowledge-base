@@ -3,6 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy import Column, Integer, String, JSON
 from extensions import db
+# Add these imports at the top of server/models.py
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 
@@ -28,7 +31,7 @@ class ArticleTag(db.Model):
 # Core Tables
 # -----------------------------
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
@@ -43,6 +46,28 @@ class User(db.Model):
 
     # association proxies
     permissions = association_proxy("roles", "permissions")
+
+        # Add these authentication methods to the User class
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+    
+    def check_password(self, password):
+        # For seeded users with 'hashed_pw' placeholder
+        if self.password_hash == 'hashed_pw':
+            # For development - compare with default password
+            return password == 'password123'
+        
+        # For properly hashed passwords
+        if self.password_hash and self.password_hash.startswith('pbkdf2:sha256:'):
+            return check_password_hash(self.password_hash, password)
+        
+        return False
+
+    def has_permission(self, permission_name):
+        return any(perm.name == permission_name for perm in self.permissions)
+
+    def has_role(self, role_name):
+        return any(role.name == role_name for role in self.roles)
 
     def serialize(self):
         return {

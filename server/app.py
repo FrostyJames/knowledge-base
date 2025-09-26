@@ -1,61 +1,75 @@
-from flask import Flask, request, make_response, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from sqlalchemy import MetaData
-from flask_cors import CORS 
-from flask_migrate import Migrate
-from flask_restful import Api
-from extensions import db, migrate  # import from extensions
+# server/app.py
+from flask import Flask, jsonify
+from flask_login import current_user
+from config import Config
+from extensions import db, migrate, login_manager, cors
 
+app = Flask(__name__)
+app.config.from_object(Config)
 
-def create_app():
-    app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///knowbase.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# Initialize extensions
+db.init_app(app)
+migrate.init_app(app, db)
+login_manager.init_app(app)
+login_manager.login_view = 'auth.login'
+login_manager.login_message = 'Please log in to access this page.'
 
-     
-    db.init_app(app)
-    migrate.init_app(app, db)
+# CORS configuration
+cors.init_app(app, resources={
+    r"/*": {
+        "origins": "*",
+        "methods": ["GET", "POST", "PUT", "DELETE"],
+        "allow_headers": ["Content-Type", "Authorization"],
+        "supports_credentials": True
+    }
+})
 
-    # Instantiate REST API
-    api = Api(app)
+# Register blueprints
+from auth import auth_bp
+app.register_blueprint(auth_bp, url_prefix='/auth')
 
-    # Instantiate CORS
-    CORS(app)
-
-
-    # Import models so migrations see them
-    from models import User, Role, Permission, Category, Article, Tag, ArticleMedia
-
-    @app.route("/")
-    def home():
-        return jsonify({"message": "Knowledge Base API running"}), 200
+# Import and register app_routes blueprints
+try:
+    from app_routes.articles import articles_bp
+    from app_routes.categories import categories_bp
+    from app_routes.media import media_bp
+    from app_routes.permissions import permissions_bp
+    from app_routes.roles import roles_bp
     
-    @app.route('/articles', methods=['GET'])
-    def get_articles():
-        articles = Article.query.all()
-        return jsonify([article.serialize() for article in articles]), 200
-    
-    from app_routes.articles import register_article_routes
-    register_article_routes(app)
+    app.register_blueprint(articles_bp, url_prefix='/api')
+    app.register_blueprint(categories_bp, url_prefix='/api')
+    app.register_blueprint(media_bp, url_prefix='/api')
+    app.register_blueprint(permissions_bp, url_prefix='/api')
+    app.register_blueprint(roles_bp, url_prefix='/api')
+except ImportError as e:
+    print(f"Note: Some app_routes not available: {e}")
 
-    from app_routes.categories import register_category_routes
-    register_category_routes(app)
+# Import models for migrations
+from models import User, Role, Permission, Category, Article, Tag, ArticleMedia
 
-    from app_routes.roles import register_role_routes
-    register_role_routes(app)
+# Basic routes
+@app.route("/")
+def home():
+    return jsonify({"message": "Knowledge Base API running"}), 200
 
-    from app_routes.permissions import register_permission_routes
-    register_permission_routes(app)
+# Protected route example
+@app.route("/protected")
+def protected():
+    if current_user.is_authenticated:
+        return jsonify({
+            'message': f'Hello {current_user.name}!',
+            'user': current_user.serialize()
+        }), 200
+    return jsonify({'error': 'Not authenticated'}), 401
 
-    from app_routes.media import register_media_routes
-    register_media_routes(app)
-    
+# Error handlers
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({'error': 'Resource not found'}), 404
 
-    # catch-all for unsupported methods (for the app, not individual route)
-    @app.errorhandler(405)
-    def method_not_allowed(e):
-        return jsonify({"text": "Method Not Allowed"}), 405
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({'error': 'Internal server error'}), 500
 
-
-    return app
+if __name__ == '__main__':
+    app.run(debug=True)
