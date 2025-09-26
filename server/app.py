@@ -52,12 +52,9 @@ def create_app():
     with app.app_context():
         upgrade()
 
-        # Import inside the context so db/session is available
-        from models import Article  # adjust to your actual model
-        from seed import run as seed_run
+        # Always run seed
+        from seed import seed_data
+        seed_data()
 
-        # Only seed if the table is empty
-        if db.session.query(Article).count() == 0:
-            seed_run()
 
     return app
