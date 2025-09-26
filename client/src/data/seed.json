@@ -1,0 +1,16 @@
+{
+  "documents": [
+    { "id": 1, "title": "Patient Admission Form", "filename": "admission_form.pdf", "media_type": "pdf", "url": "#" },
+    { "id": 2, "title": "MRI Scan Report", "filename": "mri_scan.mov", "media_type": "mp4", "url": "#" },
+    { "id": 3, "title": "X-Ray Images", "filename": "xray_images.pdf", "media_type": "pdf", "url": "#" },
+    { "id": 4, "title": "Blood Test Results", "filename": "blood_test.pdf", "media_type": "pdf", "url": "#" },
+    { "id": 5, "title": "Surgery Video", "filename": "surgery.mov", "media_type": "mp4", "url": "#" }
+  ],
+  "articles": [
+    { "id": 1, "title": "Managing Patient Records", "category": "Administration" },
+    { "id": 2, "title": "Latest Advances in Cardiology", "category": "Cardiology" },
+    { "id": 3, "title": "Hospital Hygiene Best Practices", "category": "Health & Safety" },
+    { "id": 4, "title": "Emergency Room Protocols", "category": "Emergency" },
+    { "id": 5, "title": "Nursing Care Guidelines", "category": "Nursing" }
+  ]
+}

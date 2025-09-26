@@ -1,68 +1,102 @@
-/* :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* Custom neon-dark theme overrides */
+:root {
+  --color-bg: #0f0f1f;
+  --color-card-bg: #1a1a2e;
+  --color-text: #e0e0ff;
+  --color-primary: #7f5af0;
+  --color-primary-hover: #9b70ff;
+  --color-border: #2a2a3f;
+  --color-shadow: rgba(127, 90, 240, 0.4);
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
+/* Base body */
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
+  @apply bg-gray-900 text-gray-100 font-sans;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   min-height: 100vh;
+  line-height: 1.6;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* Cards */
+.card {
+  @apply rounded-2xl p-6 shadow-md transition-shadow duration-300;
+  background-color: var(--color-card-bg);
+  box-shadow: 0 4px 15px var(--color-shadow);
 }
 
+.card:hover {
+  box-shadow: 0 8px 25px var(--color-shadow);
+}
+
+/* Buttons */
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+  background-color: var(--color-primary);
+  color: white;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-} */
+button:hover {
+  background-color: var(--color-primary-hover);
+  box-shadow: 0 0 15px var(--color-shadow);
+}
+
+/* Links */
+a {
+  color: var(--color-primary);
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--color-primary-hover);
+}
+
+/* Sidebar */
+.sidebar {
+  @apply w-64 h-screen backdrop-blur-md text-gray-200 flex flex-col border-r border-gray-800;
+  background-color: rgba(15, 15, 31, 0.8);
+}
+
+.sidebar a.active {
+  @apply bg-indigo-600 text-white shadow-lg;
+  box-shadow: 0 0 15px var(--color-shadow);
+}
+
+.sidebar a:hover {
+  @apply text-indigo-300;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111122;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: 8px;
+}
+
+/* Focus rings for accessibility */
+:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Responsive typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Poppins', sans-serif;
+  color: var(--color-text);
+}
+
+input, textarea {
+  @apply rounded-lg px-3 py-2 bg-gray-800 text-gray-100 border border-gray-700 focus:border-indigo-500 focus:ring focus:ring-indigo-500/30;
+}
