@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
+const BASE_URL = 'https://knowledge-base-production-543f.up.railway.app';
+
 export default function Documents() {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +17,7 @@ export default function Documents() {
   }, []);
 
   const fetchDocuments = () => {
-    axios.get('http://localhost:5000/documents')
+    axios.get(`${BASE_URL}/documents`)
       .then((res) => {
         setDocuments(res.data);
         setLoading(false);
@@ -30,7 +32,7 @@ export default function Documents() {
     const { article_id, media_type, url } = newDoc;
     if (!article_id || !media_type || !url) return;
 
-    axios.post('http://localhost:5000/media', {
+    axios.post(`${BASE_URL}/media`, {
       article_id,
       media_type,
       url,
@@ -46,7 +48,7 @@ export default function Documents() {
   };
 
   const handleDelete = (id) => {
-    axios.delete(`http://localhost:5000/media/${id}`)
+    axios.delete(`${BASE_URL}/media/${id}`)
       .then(fetchDocuments)
       .catch((err) => {
         console.error('Delete failed:', err.message);

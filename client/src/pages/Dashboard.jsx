@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
+const BASE_URL = 'https://knowledge-base-production-543f.up.railway.app';
+
 export default function Dashboard({ searchTerm = '' }) {
   const [documents, setDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:5000/documents')
+    fetch(`${BASE_URL}/documents`)
       .then((res) => res.json())
       .then((data) => {
         setDocuments(data);

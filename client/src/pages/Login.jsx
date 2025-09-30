@@ -9,7 +9,7 @@ export default function Login({ onLogin }) {
     e.preventDefault();
     if (email.trim() && password.trim()) {
       const user = { email };
-      localStorage.setItem("knowbaseUser", JSON.stringify(user)); // ✅ Persist login
+      localStorage.setItem("knowbaseUser", JSON.stringify(user)); 
       onLogin(user);
     }
   };

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+const BASE_URL = 'https://knowledge-base-production-543f.up.railway.app';
+
 export default function ArticleView() {
   const [articles, setArticles] = useState([]);
   const [search, setSearch] = useState('');
@@ -18,13 +20,13 @@ export default function ArticleView() {
   }, []);
 
   const fetchArticles = () => {
-    axios.get('http://localhost:5000/articles')
+    axios.get(`${BASE_URL}/articles`)
       .then((res) => setArticles(res.data))
       .catch((err) => console.error('Error fetching articles:', err));
   };
 
   const handleDelete = (id) => {
-    axios.delete(`http://localhost:5000/articles/${id}`)
+    axios.delete(`${BASE_URL}/articles/${id}`)
       .then(fetchArticles)
       .catch((err) => console.error('Error deleting article:', err));
   };
@@ -37,7 +39,7 @@ export default function ArticleView() {
       tags: formTags.split(',').map(tag => tag.trim()).filter(Boolean),
     };
 
-    axios.put(`http://localhost:5000/articles/${id}`, payload)
+    axios.put(`${BASE_URL}/articles/${id}`, payload)
       .then(() => {
         setEditingId(null);
         setNewTitle('');
@@ -62,7 +64,7 @@ export default function ArticleView() {
       tags: formTags.split(',').map(tag => tag.trim()).filter(Boolean),
     };
 
-    axios.post('http://localhost:5000/articles', payload)
+    axios.post(`${BASE_URL}/articles`, payload)
       .then(() => {
         setShowForm(false);
         setFormTitle('');
