@@ -1,24 +1,42 @@
+<<<<<<< HEAD
+from flask import Flask
+=======
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate, upgrade
+>>>>>>> main
 from flask_cors import CORS
-from flask_restful import Api
+from config import Config
 from extensions import db, migrate
+from routes.articles import articles_bp
+from routes.documents import documents_bp
+from routes.media import media_bp  # ✅ Add this line
 
-def create_app():
-    app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///knowbase.db'
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app = Flask(__name__)
+app.config.from_object(Config)
 
-    db.init_app(app)
-    migrate.init_app(app, db)
+# Enable CORS globally with full method support
+CORS(app, resources={r"/*": {
+    "origins": "http://127.0.0.1:5174",
+    "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    "allow_headers": "*",
+    "supports_credentials": True
+}})
 
-    # ✅ Enable CORS for your frontend origin
-    CORS(app, origins=["http://127.0.0.1:5173"], supports_credentials=True)
+# Initialize extensions
+db.init_app(app)
+migrate.init_app(app, db)
 
-    # Instantiate REST API
-    api = Api(app)
+# Register blueprints
+app.register_blueprint(articles_bp, url_prefix='/articles')
+app.register_blueprint(documents_bp, url_prefix='/documents')
+app.register_blueprint(media_bp, url_prefix='/media')  # ✅ Add this line
 
+<<<<<<< HEAD
+@app.route('/')
+def home():
+    return 'Welcome to KnowBase API!'
+=======
     # Import models so migrations detect them
     from models import User, Role, Permission, Category, Article, Tag, ArticleMedia
 
@@ -58,3 +76,4 @@ def create_app():
 
 
     return app
+>>>>>>> main
