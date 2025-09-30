@@ -21,7 +21,6 @@ class Article(db.Model):
             "created_at": self.created_at.isoformat()
         }
 
-
 class Document(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     article_id = db.Column(db.Integer, db.ForeignKey('article.id'), nullable=False)
@@ -29,6 +28,7 @@ class Document(db.Model):
     url = db.Column(db.String(255), nullable=False)
     filename = db.Column(db.String(100))
     title = db.Column(db.String(100))
+    description = db.Column(db.Text)  # ✅ Added this line
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 
     def to_dict(self):
@@ -39,5 +39,6 @@ class Document(db.Model):
             "url": self.url,
             "filename": self.filename,
             "title": self.title,
+            "description": self.description,
             "created_at": self.created_at.isoformat()
         }
