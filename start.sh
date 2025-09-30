@@ -1,5 +1,5 @@
 #!/bin/bash
 cd server
 export FLASK_APP=app:app
-flask db upgrade
-gunicorn app:app --bind 0.0.0.0:$PORT
+python3 -m flask db upgrade
+python3 -m gunicorn app:app --bind 0.0.0.0:$PORT
