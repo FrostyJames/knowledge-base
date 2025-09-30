@@ -1,102 +1,87 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 export default function ArticleView() {
   const [articles, setArticles] = useState([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [editingId, setEditingId] = useState(null);
-  const [newTitle, setNewTitle] = useState("");
-  const [newContent, setNewContent] = useState("");
-  const [formCategory, setFormCategory] = useState("");
-  const [formTags, setFormTags] = useState("");
+  const [newTitle, setNewTitle] = useState('');
+  const [newContent, setNewContent] = useState('');
+  const [formCategory, setFormCategory] = useState('');
+  const [formTags, setFormTags] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [formTitle, setFormTitle] = useState("");
-  const [formContent, setFormContent] = useState("");
+  const [formTitle, setFormTitle] = useState('');
+  const [formContent, setFormContent] = useState('');
 
   useEffect(() => {
     fetchArticles();
   }, []);
 
   const fetchArticles = () => {
-    fetch('http://localhost:5000/articles')
-      .then(res => {
-        if (!res.ok) throw new Error(`Server error: ${res.status}`);
-        return res.json();
-      })
-      .then(data => setArticles(data))
-      .catch(err => console.error('Error fetching articles:', err));
+    axios.get('http://localhost:5000/articles')
+      .then((res) => setArticles(res.data))
+      .catch((err) => console.error('Error fetching articles:', err));
   };
 
   const handleDelete = (id) => {
-    fetch(`http://localhost:5000/articles/${id}`, {
-      method: 'DELETE'
-    })
-      .then(() => fetchArticles())
-      .catch(err => console.error('Error deleting article:', err));
+    axios.delete(`http://localhost:5000/articles/${id}`)
+      .then(fetchArticles)
+      .catch((err) => console.error('Error deleting article:', err));
   };
 
   const handleEdit = (id) => {
     const payload = {
       title: newTitle.trim(),
       content: newContent.trim(),
-      category_id: formCategory ? parseInt(formCategory) : null,
-      tags: formTags.split(',').map(tag => tag.trim()).filter(tag => tag)
+      category: formCategory.trim(),
+      tags: formTags.split(',').map(tag => tag.trim()).filter(Boolean),
     };
 
-    fetch(`http://localhost:5000/articles/${id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
+    axios.put(`http://localhost:5000/articles/${id}`, payload)
       .then(() => {
         setEditingId(null);
-        setNewTitle("");
-        setNewContent("");
-        setFormCategory("");
-        setFormTags("");
+        setNewTitle('');
+        setNewContent('');
+        setFormCategory('');
+        setFormTags('');
         fetchArticles();
       })
-      .catch(err => console.error('Error editing article:', err));
+      .catch((err) => console.error('Error editing article:', err));
   };
 
   const handleCreate = () => {
-    const trimmedTitle = formTitle.trim();
-    const trimmedContent = formContent.trim();
-
-    if (!trimmedTitle || !trimmedContent) {
-      alert("⚠️ Title and content are required.");
+    if (!formTitle.trim() || !formContent.trim()) {
+      alert('⚠️ Title and content are required.');
       return;
     }
 
     const payload = {
-      title: trimmedTitle,
-      content: trimmedContent,
-      category_id: formCategory ? parseInt(formCategory) : null,
-      tags: formTags.split(',').map(tag => tag.trim()).filter(tag => tag)
+      title: formTitle.trim(),
+      content: formContent.trim(),
+      category: formCategory.trim(),
+      tags: formTags.split(',').map(tag => tag.trim()).filter(Boolean),
     };
 
-    fetch('http://localhost:5000/articles', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
+    axios.post('http://localhost:5000/articles', payload)
       .then(() => {
         setShowForm(false);
-        setFormTitle("");
-        setFormContent("");
-        setFormCategory("");
-        setFormTags("");
+        setFormTitle('');
+        setFormContent('');
+        setFormCategory('');
+        setFormTags('');
         fetchArticles();
       })
-      .catch(err => console.error('Error creating article:', err));
+      .catch((err) => console.error('Error creating article:', err));
   };
 
-  const filteredArticles = articles.filter(article =>
-    article.title?.toLowerCase().includes(search.toLowerCase()) ||
-    article.content?.toLowerCase().includes(search.toLowerCase())
+  const filteredArticles = articles.filter(
+    (article) =>
+      article.title?.toLowerCase().includes(search.toLowerCase()) ||
+      article.content?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-6">
       {/* Top controls */}
       <div className="flex items-center justify-between">
         <input
@@ -132,7 +117,7 @@ export default function ArticleView() {
           />
           <input
             type="text"
-            placeholder="Category ID"
+            placeholder="Category"
             value={formCategory}
             onChange={(e) => setFormCategory(e.target.value)}
             className="w-full px-3 py-2 border rounded"
@@ -149,8 +134,8 @@ export default function ArticleView() {
             disabled={!formTitle.trim() || !formContent.trim()}
             className={`px-4 py-2 rounded ${
               formTitle.trim() && formContent.trim()
-                ? "bg-green-600 hover:bg-green-700 text-white"
-                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                ? 'bg-green-600 hover:bg-green-700 text-white'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
             }`}
           >
             Submit Article
@@ -177,7 +162,7 @@ export default function ArticleView() {
                 />
                 <input
                   type="text"
-                  placeholder="Category ID"
+                  placeholder="Category"
                   value={formCategory}
                   onChange={(e) => setFormCategory(e.target.value)}
                   className="w-full border px-2 py-1 rounded"
@@ -189,37 +174,63 @@ export default function ArticleView() {
                   onChange={(e) => setFormTags(e.target.value)}
                   className="w-full border px-2 py-1 rounded"
                 />
-                <button onClick={() => handleEdit(article.id)} className="bg-green-600 text-white px-3 py-1 rounded">Save</button>
-                <button onClick={() => {
-                  setEditingId(null);
-                  setNewTitle("");
-                  setNewContent("");
-                  setFormCategory("");
-                  setFormTags("");
-                }} className="text-gray-500 px-3 py-1">Cancel</button>
+                <div className="flex gap-2 mt-2">
+                  <button
+                    onClick={() => handleEdit(article.id)}
+                    className="bg-green-600 text-white px-3 py-1 rounded"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => {
+                      setEditingId(null);
+                      setNewTitle('');
+                      setNewContent('');
+                      setFormCategory('');
+                      setFormTags('');
+                    }}
+                    className="text-gray-500 px-3 py-1"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </>
             ) : (
               <>
                 <h3 className="text-lg font-semibold">{article.title}</h3>
                 <p className="text-sm text-gray-600">{article.content}</p>
                 <p className="text-xs text-gray-500">
-                  <strong>Author:</strong> {article.author || "Unknown"} | <strong>Category:</strong> {article.category || "Uncategorized"}
+                  <strong>Category:</strong> {article.category || 'Uncategorized'}
                 </p>
                 <div className="flex flex-wrap gap-2 text-xs text-gray-500">
-                  {(article.tags || []).filter(tag => tag.trim()).map(tag => (
-                    <span key={tag} className="bg-gray-200 px-2 py-1 rounded">{tag}</span>
+                  {(article.tags || []).map((tag) => (
+                    <span key={tag} className="bg-gray-200 px-2 py-1 rounded">
+                      {tag}
+                    </span>
                   ))}
-                  <span className="ml-auto">Created: {new Date(article.created_at).toLocaleDateString()}</span>
+                  <span className="ml-auto">
+                    Created: {new Date(article.created_at).toLocaleDateString()}
+                  </span>
                 </div>
                 <div className="flex gap-2 mt-2">
-                  <button onClick={() => {
-                    setEditingId(article.id);
-                    setNewTitle(article.title);
-                    setNewContent(article.content);
-                    setFormCategory(article.category_id?.toString() || "");
-                    setFormTags((article.tags || []).join(', '));
-                  }} className="text-blue-600 text-sm">Edit</button>
-                  <button onClick={() => handleDelete(article.id)} className="text-red-600 text-sm">Delete</button>
+                  <button
+                    onClick={() => {
+                      setEditingId(article.id);
+                      setNewTitle(article.title);
+                      setNewContent(article.content);
+                      setFormCategory(article.category || '');
+                      setFormTags((article.tags || []).join(', '));
+                    }}
+                    className="text-blue-600 text-sm"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(article.id)}
+                    className="text-red-600 text-sm"
+                  >
+                    Delete
+                  </button>
                 </div>
               </>
             )}

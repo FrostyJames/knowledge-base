@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export default function Documents() {
   const [documents, setDocuments] = useState([]);
@@ -14,14 +15,13 @@ export default function Documents() {
   }, []);
 
   const fetchDocuments = () => {
-    fetch('http://localhost:5000/documents')
-      .then((res) => res.json())
-      .then((data) => {
-        setDocuments(data);
+    axios.get('http://localhost:5000/documents')
+      .then((res) => {
+        setDocuments(res.data);
         setLoading(false);
       })
       .catch((err) => {
-        console.error('Error fetching documents:', err);
+        console.error('Error fetching documents:', err.message);
         setLoading(false);
       });
   };
@@ -30,32 +30,31 @@ export default function Documents() {
     const { article_id, media_type, url } = newDoc;
     if (!article_id || !media_type || !url) return;
 
-    fetch('http://localhost:5000/media', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        article_id,
-        media_type,
-        url,
-        metadata_json: { description: 'Linked via URL' }
-      })
+    axios.post('http://localhost:5000/media', {
+      article_id,
+      media_type,
+      url,
+      metadata_json: { description: 'Linked via URL' }
     })
-      .then((res) => res.json())
       .then(() => {
         setNewDoc({ article_id: '', media_type: '', url: '' });
         fetchDocuments();
       })
-      .catch((err) => console.error('Upload failed:', err));
+      .catch((err) => {
+        console.error('Upload failed:', err.message);
+      });
   };
 
   const handleDelete = (id) => {
-    fetch(`http://localhost:5000/media/${id}`, { method: 'DELETE' })
-      .then(() => fetchDocuments())
-      .catch((err) => console.error('Delete failed:', err));
+    axios.delete(`http://localhost:5000/media/${id}`)
+      .then(fetchDocuments)
+      .catch((err) => {
+        console.error('Delete failed:', err.message);
+      });
   };
 
-  const getIcon = (type) => {
-    switch (type) {
+  const getIcon = (type = '') => {
+    switch (type.toLowerCase()) {
       case 'pdf': return '📄';
       case 'docx': return '📁';
       case 'mp4':
@@ -69,36 +68,44 @@ export default function Documents() {
   };
 
   return (
-    <div className="h-full w-full bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-semibold mb-4">Documents</h2>
+    <div className="bg-white p-6 rounded-xl shadow-md space-y-8">
+      {/* Header */}
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-lg shadow flex justify-between items-center">
+        <h2 className="text-2xl font-bold">📁 Documents</h2>
+        <span className="text-sm opacity-80">Manage linked media files</span>
+      </div>
 
       {/* Add New Document */}
-      <div className="mb-6 space-y-2">
+      <div className="bg-white/80 backdrop-blur-md p-6 rounded-lg shadow space-y-4 border border-gray-200">
         <input
           type="text"
           placeholder="Article ID"
           value={newDoc.article_id}
           onChange={(e) => setNewDoc({ ...newDoc, article_id: e.target.value })}
-          className="border p-2 w-full"
+          className="border px-4 py-2 rounded w-full"
         />
         <input
           type="text"
           placeholder="Media Type (pdf, mp4, etc)"
           value={newDoc.media_type}
           onChange={(e) => setNewDoc({ ...newDoc, media_type: e.target.value })}
-          className="border p-2 w-full"
+          className="border px-4 py-2 rounded w-full"
         />
         <input
           type="text"
           placeholder="Media URL (e.g. https://...)"
           value={newDoc.url}
           onChange={(e) => setNewDoc({ ...newDoc, url: e.target.value })}
-          className="border p-2 w-full"
+          className="border px-4 py-2 rounded w-full"
         />
         <button
           onClick={handleAdd}
-          className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
           disabled={!newDoc.article_id || !newDoc.media_type || !newDoc.url}
+          className={`px-4 py-2 rounded font-semibold ${
+            newDoc.article_id && newDoc.media_type && newDoc.url
+              ? 'bg-blue-600 text-white hover:bg-blue-700'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
         >
           Add Document
         </button>
@@ -106,28 +113,35 @@ export default function Documents() {
 
       {/* Document List */}
       {loading ? (
-        <p>Loading...</p>
+        <p className="text-gray-500">Loading documents...</p>
       ) : documents.length === 0 ? (
         <p className="text-gray-600">No documents found.</p>
       ) : (
         <ul className="space-y-4">
-          {documents.map((doc) => (
-            <li key={`${doc.article_id}-${doc.filename}`} className="flex justify-between items-center border-b pb-2">
-              <div>
-                <span className="text-2xl mr-2">{getIcon(doc.media_type)}</span>
-                <strong>{doc.title}</strong> — {doc.media_type.toUpperCase()}
-                <a
-                  href={doc.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-2 text-blue-600 hover:underline"
-                >
-                  {doc.filename}
-                </a>
+          {documents.map((doc, index) => (
+            <li
+              key={`doc-${doc.id ?? index}`}
+              className="flex justify-between items-center bg-white p-4 rounded-lg shadow border border-gray-200 hover:shadow-md transition"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <span className="text-2xl">{getIcon(doc.media_type)}</span>
+                <div>
+                  <strong className="text-gray-800">{doc.title ?? 'Untitled'}</strong>{' '}
+                  <span className="text-xs text-gray-500">({(doc.media_type ?? 'unknown').toUpperCase()})</span>
+                  <br />
+                  <a
+                    href={doc.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline text-sm"
+                  >
+                    {doc.filename ?? 'Unnamed file'}
+                  </a>
+                </div>
               </div>
               <button
                 onClick={() => handleDelete(doc.id)}
-                className="text-red-600 hover:underline"
+                className="text-red-600 hover:underline text-sm"
               >
                 Delete
               </button>
