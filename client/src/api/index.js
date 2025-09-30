@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = 'https://knowledge-base-production-543f.up.railway.app';
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'https://knowledge-base-production-543f.up.railway.app';
 
 export const getArticles = () => axios.get(`${BASE_URL}/articles`);
 export const createArticle = (data) => axios.post(`${BASE_URL}/articles`, data);
