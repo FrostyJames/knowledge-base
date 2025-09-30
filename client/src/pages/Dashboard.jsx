@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-const BASE_URL = 'https://knowledge-base-production-543f.up.railway.app';
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'https://knowledge-base-production-543f.up.railway.app';
 
 export default function Dashboard({ searchTerm = '' }) {
   const [documents, setDocuments] = useState([]);

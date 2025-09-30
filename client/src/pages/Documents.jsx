@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const BASE_URL = 'https://knowledge-base-production-543f.up.railway.app';
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || 'https://knowledge-base-production-543f.up.railway.app';
 
 export default function Documents() {
   const [documents, setDocuments] = useState([]);
