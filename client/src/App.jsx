@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
@@ -65,5 +64,3 @@ export default function App() {
     </div>
   );
 }
-=======
->>>>>>> main
