@@ -12,9 +12,12 @@ from models import Article, Document
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Enable CORS for frontend integration
+# Enable CORS for frontend integration (local + deployed)
 CORS(app, resources={r"/*": {
-    "origins": "http://127.0.0.1:5174",  # Adjust if frontend runs elsewhere
+    "origins": [
+        "http://127.0.0.1:5174",  # Local dev
+        "https://knowledge-base-alpha-nine.vercel.app",  # Vercel frontend
+    ],
     "methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
     "allow_headers": "*",
     "supports_credentials": True
@@ -39,7 +42,7 @@ def home():
 def method_not_allowed(e):
     return jsonify({"error": "Method Not Allowed"}), 405
 
-# Run migrations and seed data on startup
+# Optional: Run migrations and seed data on startup
 # with app.app_context():
 #     upgrade()
 #     try:
